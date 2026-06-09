@@ -196,21 +196,30 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
               {picks.map((pick) => {
                 const profile = profiles.find((p) => p.id === pick.user_id);
                 if (!profile) return null;
-                const isCorrect = match.winner && match.winner !== 'NR' && pick.picked_team === match.winner;
+                const isNR = match.winner === 'NR';
+                const isCorrect = match.winner && !isNR && pick.picked_team === match.winner;
+                const isWrong = match.winner && !isNR && pick.picked_team !== match.winner;
+                const borderColor = pick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(pick.picked_team);
                 return (
                   <div
                     key={pick.id}
                     style={{
                       padding: '0.5rem',
                       borderRadius: 8,
-                      border: `2px solid ${pick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(pick.picked_team)}`,
-                      background: isCorrect ? 'var(--color-primary-dim)' : 'rgba(255,255,255,0.03)',
+                      border: `2px solid ${borderColor}`,
+                      background: isCorrect ? 'var(--color-success-dim)' : isWrong ? 'var(--color-error-dim)' : 'transparent',
                       textAlign: 'center',
+                      position: 'relative',
                     }}
                   >
+                    {match.status === 'completed' && !isNR && (
+                      <span style={{ position: 'absolute', top: 4, right: 4, fontSize: '0.65rem' }}>
+                        {isCorrect ? '✅' : '❌'}
+                      </span>
+                    )}
                     <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-body)' }}>
                       {profile.display_name}
-                      {pick.user_id === userId && <span style={{ marginLeft: 4, fontSize: '0.6rem', background: 'var(--color-primary)', color: 'var(--color-bg)', borderRadius: 4, padding: '1px 4px' }}>YOU</span>}
+                      {pick.user_id === userId && <span style={{ marginLeft: 4, fontSize: '0.6rem', background: 'var(--color-primary)', color: '#fff', borderRadius: 4, padding: '1px 4px' }}>YOU</span>}
                     </div>
                     <div style={{ fontSize: '0.7rem', color: pick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(pick.picked_team), fontWeight: 600 }}>
                       → {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
@@ -219,7 +228,10 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
                 );
               })}
               {skippedPlayers.map((p) => (
-                <div key={p.id} style={{ padding: '0.5rem', borderRadius: 8, border: '2px solid var(--color-border)', textAlign: 'center', opacity: 0.5 }}>
+                <div key={p.id} style={{ padding: '0.5rem', borderRadius: 8, border: '2px solid var(--color-border)', textAlign: 'center', opacity: 0.5, position: 'relative' }}>
+                  {match.status === 'completed' && match.winner !== 'NR' && (
+                    <span style={{ position: 'absolute', top: 4, right: 4, fontSize: '0.65rem' }}>❌</span>
+                  )}
                   <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-body)' }}>{p.display_name}</div>
                   <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Skipped</div>
                 </div>
