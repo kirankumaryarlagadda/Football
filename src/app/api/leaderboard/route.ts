@@ -11,6 +11,17 @@ export async function GET() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
+  // Get prizes from app_settings
+  let prizes = { first: 0, second: 0, third: 0, streak: 0 };
+  const { data: prizeSetting } = await supabaseAdmin
+    .from('app_settings')
+    .select('value')
+    .eq('key', 'fwc_prizes')
+    .single();
+  if (prizeSetting?.value) {
+    prizes = prizeSetting.value as typeof prizes;
+  }
+
   // Get all approved profiles
   const { data: profiles } = await supabaseAdmin
     .from('profiles')
@@ -18,7 +29,7 @@ export async function GET() {
     .eq('is_approved', true);
 
   if (!profiles || profiles.length === 0) {
-    return NextResponse.json({ leaderboard: [] });
+    return NextResponse.json({ leaderboard: [], prizes });
   }
 
   // Get completed matches
@@ -29,7 +40,6 @@ export async function GET() {
     .order('match_number', { ascending: true });
 
   if (!matches || matches.length === 0) {
-    // No completed matches yet — still show all players with 0 points
     const ranked = profiles.map((profile, index) => ({
       user_id: profile.id,
       display_name: profile.display_name,
@@ -41,7 +51,7 @@ export async function GET() {
       longest_streak: 0,
       rank: index + 1,
     }));
-    return NextResponse.json({ leaderboard: ranked });
+    return NextResponse.json({ leaderboard: ranked, prizes });
   }
 
   // Get all picks for completed matches
@@ -112,5 +122,5 @@ export async function GET() {
     rank: index + 1,
   }));
 
-  return NextResponse.json({ leaderboard: ranked });
+  return NextResponse.json({ leaderboard: ranked, prizes });
 }

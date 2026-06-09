@@ -10,7 +10,7 @@ type TabKey = 'matches' | 'players' | 'settings';
 interface Props {
   matches: Match[];
   profiles: Profile[];
-  prizes: { first: number; second: number; third: number } | null;
+  prizes: { first: number; second: number; third: number; streak: number } | null;
   userId: string;
 }
 
@@ -26,7 +26,7 @@ export default function AdminClient({ matches: initialMatches, profiles: initial
   const [syncMessage, setSyncMessage] = useState('');
   const [editingMatch, setEditingMatch] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<{ match_date?: string; match_hour?: string; venue?: string; status?: string; stage?: MatchStage; team1?: string; team2?: string }>({});
-  const [prizes, setPrizes] = useState(initialPrizes || { first: 0, second: 0, third: 0 });
+  const [prizes, setPrizes] = useState(initialPrizes || { first: 0, second: 0, third: 0, streak: 0 });
   const [prizeMessage, setPrizeMessage] = useState('');
 
   // Add match form
@@ -411,8 +411,12 @@ export default function AdminClient({ matches: initialMatches, profiles: initial
                 <label className="label">🥉 3rd Place (₹)</label>
                 <input className="input" type="number" value={prizes.third} onChange={(e) => setPrizes((p) => ({ ...p, third: parseInt(e.target.value) || 0 }))} />
               </div>
+              <div>
+                <label className="label">🔥 Best Streak (₹) — Outside Top 3</label>
+                <input className="input" type="number" value={prizes.streak} onChange={(e) => setPrizes((p) => ({ ...p, streak: parseInt(e.target.value) || 0 }))} />
+              </div>
               <button onClick={handleSavePrizes} className="btn-primary">Save Prizes</button>
-              {prizeMessage && <span style={{ fontSize: '0.8rem', color: '#48bb78' }}>{prizeMessage}</span>}
+              {prizeMessage && <span style={{ fontSize: '0.8rem', color: 'var(--color-success)' }}>{prizeMessage}</span>}
             </div>
           </div>
         )}
