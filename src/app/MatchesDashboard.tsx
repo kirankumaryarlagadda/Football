@@ -130,25 +130,25 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                 const pick = getUserPick(match.id);
                 return (
                   <Link key={match.id} href={`/match/${match.id}`} style={{ textDecoration: 'none' }}>
-                    <div className="card" style={{ position: 'relative', cursor: 'pointer' }}>
-                      <span className="badge badge-error" style={{ position: 'absolute', top: 12, right: 12 }}>LIVE</span>
+                    <div className="card" style={{ position: 'relative', cursor: 'pointer', borderLeft: '4px solid #f56565' }}>
+                      <span className="badge badge-error" style={{ position: 'absolute', top: 12, right: 12, animation: 'pulse 2s infinite' }}>● LIVE</span>
                       {match.stage !== 'group' && (
-                        <div className="badge badge-gold" style={{ marginBottom: 8 }}>
-                          🏆 {getStageName(match.stage)}
+                        <div style={{ marginBottom: 8 }}>
+                          <span className="badge badge-gold">🏆 {getStageName(match.stage)}</span>
                         </div>
                       )}
                       {match.group_letter && (
-                        <div style={{ fontSize: '0.7rem', color: '#a0aec0', fontWeight: 600, marginBottom: 4 }}>
-                          GROUP {match.group_letter} · Match #{match.match_number}
+                        <div style={{ fontSize: '0.7rem', color: '#718096', fontWeight: 600, marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                          Group {match.group_letter} · Match #{match.match_number}
                         </div>
                       )}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0.75rem 0' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, margin: '0.75rem 0' }}>
                         <span style={{ fontWeight: 700, fontSize: '1.1rem', color: getTeamColor(match.team1) }}>{getTeamFullName(match.team1)}</span>
-                        <span style={{ color: '#a0aec0', fontSize: '0.8rem' }}>vs</span>
+                        <span style={{ color: '#cbd5e0', fontSize: '0.75rem', fontWeight: 600 }}>VS</span>
                         <span style={{ fontWeight: 700, fontSize: '1.1rem', color: getTeamColor(match.team2) }}>{getTeamFullName(match.team2)}</span>
                       </div>
                       {pick && (
-                        <div style={{ fontSize: '0.75rem', color: '#667eea', fontWeight: 600 }}>
+                        <div style={{ fontSize: '0.75rem', color: '#667eea', fontWeight: 600, textAlign: 'center' }}>
                           Your pick: {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
                         </div>
                       )}
@@ -175,46 +175,54 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                 const isPicking = pickingMatchId === match.id;
 
                 return (
-                  <div key={match.id} className="card" style={{ padding: '1rem 1.25rem' }}>
-                    {/* Match info */}
-                    <div style={{ marginBottom: '0.75rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                  <div key={match.id} className="card" style={{ padding: '1rem 1.25rem', borderLeft: pick ? '4px solid #667eea' : '4px solid #e2e8f0' }}>
+                    {/* Header row: group/stage + countdown */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {match.group_letter && (
-                          <span style={{ fontSize: '0.7rem', color: '#a0aec0', fontWeight: 600 }}>
-                            Grp {match.group_letter}
+                          <span style={{ fontSize: '0.65rem', color: '#fff', background: '#667eea', padding: '2px 8px', borderRadius: 4, fontWeight: 700, letterSpacing: '0.5px' }}>
+                            GRP {match.group_letter}
                           </span>
                         )}
                         {match.stage !== 'group' && (
-                          <span className="badge badge-gold" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>
+                          <span className="badge badge-gold" style={{ fontSize: '0.65rem', padding: '2px 8px' }}>
                             🏆 {getStageName(match.stage)}
                           </span>
                         )}
                         <span style={{ fontSize: '0.7rem', color: '#a0aec0' }}>#{match.match_number}</span>
-                        {!deadlinePassed && <span style={{ fontSize: '0.7rem', color: '#f56565', fontWeight: 600, marginLeft: 'auto' }}>⏱ {countdown}</span>}
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                        <span style={{ fontWeight: 700, color: getTeamColor(match.team1) }}>{getTeamFullName(match.team1)}</span>
-                        <span style={{ color: '#a0aec0', fontSize: '0.8rem' }}>vs</span>
-                        <span style={{ fontWeight: 700, color: getTeamColor(match.team2) }}>{getTeamFullName(match.team2)}</span>
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: '#a0aec0', marginTop: 4 }}>
-                        {formatDate(match.match_date)} · {match.venue}
-                      </div>
+                      {!deadlinePassed && (
+                        <span style={{ fontSize: '0.7rem', color: '#f56565', fontWeight: 700, background: 'rgba(245,101,101,0.08)', padding: '2px 8px', borderRadius: 4 }}>
+                          ⏱ {countdown}
+                        </span>
+                      )}
                     </div>
 
-                    {/* Pick area */}
+                    {/* Teams */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6, flexWrap: 'wrap' }}>
+                      <span style={{ fontWeight: 700, fontSize: '0.95rem', color: getTeamColor(match.team1) }}>{getTeamFullName(match.team1)}</span>
+                      <span style={{ color: '#cbd5e0', fontSize: '0.75rem', fontWeight: 600 }}>VS</span>
+                      <span style={{ fontWeight: 700, fontSize: '0.95rem', color: getTeamColor(match.team2) }}>{getTeamFullName(match.team2)}</span>
+                    </div>
+
+                    {/* Date & venue */}
+                    <div style={{ fontSize: '0.75rem', color: '#a0aec0', marginBottom: 12 }}>
+                      📍 {match.venue} · {formatDate(match.match_date)}
+                    </div>
+
+                    {/* Pick buttons */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
                       {deadlinePassed ? (
-                        <span className="badge badge-muted">Closed</span>
+                        <span className="badge badge-muted" style={{ padding: '6px 16px' }}>🔒 Picks Closed</span>
                       ) : pick ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: pick.picked_team === 'DRAW' ? '#b7791f' : getTeamColor(pick.picked_team) }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(102,126,234,0.06)', padding: '8px 16px', borderRadius: 10 }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: pick.picked_team === 'DRAW' ? '#b7791f' : getTeamColor(pick.picked_team) }}>
                             ✓ {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
                           </span>
                           <button
                             onClick={() => handleResetPick(match.id)}
-                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem', color: '#a0aec0' }}
-                            title="Reset pick"
+                            style={{ background: 'rgba(160,174,192,0.2)', border: 'none', cursor: 'pointer', fontSize: '0.7rem', color: '#718096', borderRadius: 4, padding: '2px 6px' }}
+                            title="Change pick"
                           >
                             ✕
                           </button>
@@ -225,31 +233,33 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                             onClick={() => handlePick(match.id, match.team1)}
                             disabled={isPicking}
                             style={{
-                              padding: '6px 14px',
-                              borderRadius: 8,
+                              padding: '8px 16px',
+                              borderRadius: 10,
                               border: `2px solid ${getTeamColor(match.team1)}`,
                               background: 'white',
                               color: getTeamColor(match.team1),
                               fontWeight: 700,
                               fontSize: '0.8rem',
                               cursor: 'pointer',
+                              transition: 'all 0.15s ease',
                             }}
                           >
-                            {getTeamFullName(match.team1)}
+                            {match.team1}
                           </button>
                           {drawAllowed && (
                             <button
                               onClick={() => handlePick(match.id, 'DRAW')}
                               disabled={isPicking}
                               style={{
-                                padding: '6px 14px',
-                                borderRadius: 8,
-                                border: '2px solid #b7791f',
+                                padding: '8px 16px',
+                                borderRadius: 10,
+                                border: '2px solid #d69e2e',
                                 background: 'white',
-                                color: '#b7791f',
+                                color: '#d69e2e',
                                 fontWeight: 700,
                                 fontSize: '0.8rem',
                                 cursor: 'pointer',
+                                transition: 'all 0.15s ease',
                               }}
                             >
                               Draw
@@ -259,17 +269,18 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                             onClick={() => handlePick(match.id, match.team2)}
                             disabled={isPicking}
                             style={{
-                              padding: '6px 14px',
-                              borderRadius: 8,
+                              padding: '8px 16px',
+                              borderRadius: 10,
                               border: `2px solid ${getTeamColor(match.team2)}`,
                               background: 'white',
                               color: getTeamColor(match.team2),
                               fontWeight: 700,
                               fontSize: '0.8rem',
                               cursor: 'pointer',
+                              transition: 'all 0.15s ease',
                             }}
                           >
-                            {getTeamFullName(match.team2)}
+                            {match.team2}
                           </button>
                         </>
                       )}
@@ -291,11 +302,12 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
               {[...completedMatches].reverse().map((match) => {
                 const pick = getUserPick(match.id);
                 const result = getPickResult(pick, match);
-                const bgColor = result === 'correct' ? 'rgba(72,187,120,0.05)' : result === 'wrong' ? 'rgba(245,101,101,0.05)' : result === 'nr' ? 'rgba(160,174,192,0.05)' : 'rgba(245,101,101,0.03)';
+                const borderColor = result === 'correct' ? '#48bb78' : result === 'wrong' ? '#f56565' : result === 'nr' ? '#a0aec0' : '#e2e8f0';
+                const bgColor = result === 'correct' ? 'rgba(72,187,120,0.04)' : result === 'wrong' ? 'rgba(245,101,101,0.04)' : 'rgba(160,174,192,0.04)';
 
                 return (
                   <Link key={match.id} href={`/match/${match.id}`} style={{ textDecoration: 'none' }}>
-                    <div className="card" style={{ padding: '0.75rem 1rem', background: bgColor, cursor: 'pointer' }}>
+                    <div className="card" style={{ padding: '0.75rem 1rem', background: bgColor, cursor: 'pointer', borderLeft: `4px solid ${borderColor}` }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                         <div>
                           <div style={{ fontSize: '0.7rem', color: '#a0aec0', marginBottom: 2 }}>
@@ -307,7 +319,7 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                           {match.winner === 'NR' ? (
                             <span style={{ marginLeft: 8, fontSize: '0.75rem', color: '#a0aec0' }}>☔ No Result</span>
                           ) : match.winner === 'DRAW' ? (
-                            <span style={{ marginLeft: 8, fontSize: '0.75rem', color: '#b7791f' }}>🤝 Draw</span>
+                            <span style={{ marginLeft: 8, fontSize: '0.75rem', color: '#d69e2e' }}>🤝 Draw</span>
                           ) : (
                             <span style={{ marginLeft: 8, fontSize: '0.75rem', color: getTeamColor(match.winner!) }}>🏆 {getTeamFullName(match.winner!)}</span>
                           )}
