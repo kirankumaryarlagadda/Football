@@ -140,16 +140,13 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
 
         {error && <div className="error-message" style={{ marginBottom: '1rem' }}>{error}</div>}
 
-        {/* Your Pick section */}
-        {currentPick && (
+        {/* Your Pick section - only show when match is live/completed */}
+        {currentPick && matchStarted && (
           <div className="card" style={{ textAlign: 'center', marginBottom: '1rem' }}>
             <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>YOUR PICK</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 800, color: currentPick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(currentPick.picked_team) }}>
               {currentPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(currentPick.picked_team)}
             </div>
-            {currentPick.picked_team !== 'DRAW' && (
-              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{getTeamFullName(currentPick.picked_team)}</div>
-            )}
             {match.status === 'completed' && match.winner && match.winner !== 'NR' && (
               <div style={{ marginTop: 8 }}>
                 {currentPick.picked_team === match.winner ? (
