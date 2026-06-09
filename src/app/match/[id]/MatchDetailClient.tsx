@@ -275,7 +275,7 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
             )}
             {!deadlinePassed && currentPick && (
               <div style={{ textAlign: 'center' }}>
-                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: 8 }}>You picked: <strong style={{ color: 'var(--color-primary)' }}>{currentPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(currentPick.picked_team)}</strong></p>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: 8 }}>You picked: <strong style={{ color: currentPick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(currentPick.picked_team) }}>{currentPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(currentPick.picked_team)}</strong></p>
                 <button onClick={handleReset} style={{ background: 'none', border: '1px solid var(--color-border)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
                   Change Pick
                 </button>
