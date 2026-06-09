@@ -236,16 +236,17 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
                           textAlign: 'center',
                           marginBottom: 12,
                           padding: '6px 16px',
-                          background: 'var(--color-primary-dim)',
+                          background: userPick.picked_team === 'DRAW' ? 'rgba(217,119,6,0.1)' : `${getTeamColor(userPick.picked_team)}15`,
                           borderRadius: 20,
                           display: 'inline-flex',
                           alignItems: 'center',
                           gap: 6,
                           margin: '0 auto 12px',
                           width: 'fit-content',
+                          border: `1px solid ${userPick.picked_team === 'DRAW' ? 'rgba(217,119,6,0.3)' : `${getTeamColor(userPick.picked_team)}40`}`,
                         }}
                       >
-                        <span style={{ fontWeight: 600, color: 'var(--color-primary)', fontSize: '0.85rem' }}>
+                        <span style={{ fontWeight: 600, color: userPick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(userPick.picked_team), fontSize: '0.85rem' }}>
                           Your Pick: {userPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(userPick.picked_team)} ✅
                         </span>
                       </div>
@@ -433,8 +434,8 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
                       </div>
                     ) : userPick ? (
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--color-primary-dim)', padding: '8px 16px', borderRadius: 10 }}>
-                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: userPick.picked_team === 'DRAW' ? 'rgba(217,119,6,0.1)' : `${getTeamColor(userPick.picked_team)}15`, padding: '8px 16px', borderRadius: 10, border: `1px solid ${userPick.picked_team === 'DRAW' ? 'rgba(217,119,6,0.3)' : `${getTeamColor(userPick.picked_team)}40`}` }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 700, color: userPick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(userPick.picked_team) }}>
                             ✓ {userPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(userPick.picked_team)}
                           </span>
                           <button
@@ -560,12 +561,13 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             <span
                               style={{
-                                background: 'var(--color-primary-dim)',
-                                color: 'var(--color-primary)',
+                                background: userPick.picked_team === 'DRAW' ? 'rgba(217,119,6,0.1)' : `${getTeamColor(userPick.picked_team)}15`,
+                                color: userPick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(userPick.picked_team),
                                 padding: '4px 12px',
                                 borderRadius: 20,
                                 fontSize: '0.8rem',
                                 fontWeight: 700,
+                                border: `1px solid ${userPick.picked_team === 'DRAW' ? 'rgba(217,119,6,0.3)' : `${getTeamColor(userPick.picked_team)}40`}`,
                               }}
                             >
                               {userPick.picked_team === 'DRAW' ? '🤝 Draw' : userPick.picked_team} ✓
