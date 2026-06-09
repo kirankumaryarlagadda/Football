@@ -1,8 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../.env.local') });
+// Load .env.local manually
+const envPath = resolve(__dirname, '../.env.local');
+const envContent = readFileSync(envPath, 'utf-8');
+for (const line of envContent.split('\n')) {
+  const match = line.match(/^([^#=]+)=(.*)$/);
+  if (match) process.env[match[1].trim()] = match[2].trim();
+}
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
@@ -17,28 +23,26 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey);
 // Helper: Convert ET time string to UTC ISO format
 // ET = UTC-4 in June/July 2026 (EDT)
 function etToUtc(dateStr: string, timeStr: string): string {
-  // dateStr format: "2026-06-11", timeStr format: "15:00"
   const [hours, minutes] = timeStr.split(':').map(Number);
   const utcHours = hours + 4;
-  
   const [year, month, day] = dateStr.split('-').map(Number);
   const date = new Date(Date.UTC(year, month - 1, day, utcHours, minutes, 0));
   return date.toISOString();
 }
 
-// Venue assignments by group (sensible distribution)
+// Venue assignments by group
 const groupVenues: Record<string, string[]> = {
   A: ['Estadio Azteca, Mexico City', 'Lumen Field, Seattle', 'BC Place, Vancouver'],
   B: ['BC Place, Vancouver', 'BMO Field, Toronto', 'Gillette Stadium, Boston'],
   C: ['Hard Rock Stadium, Miami', 'MetLife Stadium, New York/New Jersey', 'Lincoln Financial Field, Philadelphia'],
   D: ['NRG Stadium, Houston', 'AT&T Stadium, Dallas', 'Arrowhead Stadium, Kansas City'],
   E: ['Mercedes-Benz Stadium, Atlanta', 'NRG Stadium, Houston', 'AT&T Stadium, Dallas'],
-  F: ['SoFi Stadium, Los Angeles', 'Levi\'s Stadium, San Francisco Bay Area', 'Lumen Field, Seattle'],
+  F: ['SoFi Stadium, Los Angeles', "Levi's Stadium, San Francisco Bay Area", 'Lumen Field, Seattle'],
   G: ['Lincoln Financial Field, Philadelphia', 'Gillette Stadium, Boston', 'MetLife Stadium, New York/New Jersey'],
   H: ['Estadio BBVA, Monterrey', 'Estadio Akron, Guadalajara', 'NRG Stadium, Houston'],
   I: ['Hard Rock Stadium, Miami', 'Mercedes-Benz Stadium, Atlanta', 'Arrowhead Stadium, Kansas City'],
   J: ['MetLife Stadium, New York/New Jersey', 'Lincoln Financial Field, Philadelphia', 'Hard Rock Stadium, Miami'],
-  K: ['SoFi Stadium, Los Angeles', 'Levi\'s Stadium, San Francisco Bay Area', 'BC Place, Vancouver'],
+  K: ['SoFi Stadium, Los Angeles', "Levi's Stadium, San Francisco Bay Area", 'BC Place, Vancouver'],
   L: ['AT&T Stadium, Dallas', 'Arrowhead Stadium, Kansas City', 'Mercedes-Benz Stadium, Atlanta'],
 };
 
@@ -54,17 +58,20 @@ const knockoutVenues = [
   'Estadio Azteca, Mexico City',
 ];
 
-interface MatchData {
+// DB row type matching fwc_matches schema
+interface FwcMatchRow {
   match_number: number;
   team1: string;
   team2: string;
-  group_name: string | null;
-  round: string;
-  kickoff_time: string;
+  group_letter: string | null;
   venue: string;
+  match_date: string;
+  status: string;
+  winner: string | null;
+  stage: string;
 }
 
-// All 72 group stage matches
+// All 72 group stage matches (from official FIFA PDF)
 const groupMatches: Array<{
   num: number;
   team1: string;
@@ -147,11 +154,59 @@ const groupMatches: Array<{
   { num: 72, team1: 'COD', team2: 'UZB', group: 'K', date: '2026-06-28', time: '19:30' },
 ];
 
-// Generate knockout match placeholders
-function generateKnockoutMatches(): MatchData[] {
-  const matches: MatchData[] = [];
+// Stage mapping for knockout rounds
+function getStage(matchNum: number): string {
+  if (matchNum <= 72) return 'group';
+  if (matchNum <= 88) return 'round32';
+  if (matchNum <= 96) return 'round16';
+  if (matchNum <= 100) return 'quarter';
+  if (matchNum <= 102) return 'semi';
+  if (matchNum === 103) return 'bronze';
+  return 'final';
+}
 
-  // Round of 32: Matches 73-88, Jun 28 - Jul 2
+async function main() {
+  console.log('🏆 FIFA World Cup 2026 Match Seeder');
+  console.log('====================================\n');
+
+  // Step 1: Delete all existing matches
+  console.log('🗑️  Deleting existing fwc_matches...');
+  const { error: deleteError } = await supabase
+    .from('fwc_matches')
+    .delete()
+    .gte('match_number', 0);
+
+  if (deleteError) {
+    console.error('Error deleting matches:', deleteError);
+    process.exit(1);
+  }
+  console.log('✅ Existing matches deleted.\n');
+
+  // Step 2: Build group stage rows
+  console.log('📋 Preparing 72 group stage matches...');
+  const allRows: FwcMatchRow[] = [];
+
+  for (const m of groupMatches) {
+    const venues = groupVenues[m.group];
+    const venueIndex = (m.num - 1) % venues.length;
+
+    allRows.push({
+      match_number: m.num,
+      team1: m.team1,
+      team2: m.team2,
+      group_letter: m.group,
+      venue: venues[venueIndex],
+      match_date: etToUtc(m.date, m.time),
+      status: 'upcoming',
+      winner: null,
+      stage: 'group',
+    });
+  }
+
+  // Step 3: Build knockout stage rows
+  console.log('📋 Preparing 32 knockout stage matches...');
+
+  // Round of 32: Matches 73-88
   const r32Dates = [
     '2026-06-28', '2026-06-28', '2026-06-29', '2026-06-29',
     '2026-06-29', '2026-06-29', '2026-06-30', '2026-06-30',
@@ -165,18 +220,20 @@ function generateKnockoutMatches(): MatchData[] {
     '19:00', '22:00', '16:00', '20:00',
   ];
   for (let i = 0; i < 16; i++) {
-    matches.push({
+    allRows.push({
       match_number: 73 + i,
       team1: 'TBD',
       team2: 'TBD',
-      group_name: null,
-      round: 'Round of 32',
-      kickoff_time: etToUtc(r32Dates[i], r32Times[i]),
+      group_letter: null,
       venue: knockoutVenues[i % knockoutVenues.length],
+      match_date: etToUtc(r32Dates[i], r32Times[i]),
+      status: 'upcoming',
+      winner: null,
+      stage: 'round32',
     });
   }
 
-  // Round of 16: Matches 89-96, Jul 3-6
+  // Round of 16: Matches 89-96
   const r16Dates = [
     '2026-07-03', '2026-07-03', '2026-07-04', '2026-07-04',
     '2026-07-05', '2026-07-05', '2026-07-06', '2026-07-06',
@@ -186,127 +243,94 @@ function generateKnockoutMatches(): MatchData[] {
     '16:00', '20:00', '16:00', '20:00',
   ];
   for (let i = 0; i < 8; i++) {
-    matches.push({
+    allRows.push({
       match_number: 89 + i,
       team1: 'TBD',
       team2: 'TBD',
-      group_name: null,
-      round: 'Round of 16',
-      kickoff_time: etToUtc(r16Dates[i], r16Times[i]),
+      group_letter: null,
       venue: knockoutVenues[i % knockoutVenues.length],
+      match_date: etToUtc(r16Dates[i], r16Times[i]),
+      status: 'upcoming',
+      winner: null,
+      stage: 'round16',
     });
   }
 
-  // Quarter-Finals: Matches 97-100, Jul 9-10
+  // Quarter-Finals: Matches 97-100
   const qfDates = ['2026-07-09', '2026-07-09', '2026-07-10', '2026-07-10'];
   const qfTimes = ['16:00', '20:00', '16:00', '20:00'];
   for (let i = 0; i < 4; i++) {
-    matches.push({
+    allRows.push({
       match_number: 97 + i,
       team1: 'TBD',
       team2: 'TBD',
-      group_name: null,
-      round: 'Quarter-Final',
-      kickoff_time: etToUtc(qfDates[i], qfTimes[i]),
-      venue: knockoutVenues[i % 4],
+      group_letter: null,
+      venue: knockoutVenues[i],
+      match_date: etToUtc(qfDates[i], qfTimes[i]),
+      status: 'upcoming',
+      winner: null,
+      stage: 'quarter',
     });
   }
 
-  // Semi-Finals: Matches 101-102, Jul 14-15
-  matches.push({
+  // Semi-Finals: Matches 101-102
+  allRows.push({
     match_number: 101,
     team1: 'TBD',
     team2: 'TBD',
-    group_name: null,
-    round: 'Semi-Final',
-    kickoff_time: etToUtc('2026-07-14', '20:00'),
+    group_letter: null,
     venue: 'MetLife Stadium, New York/New Jersey',
+    match_date: etToUtc('2026-07-14', '20:00'),
+    status: 'upcoming',
+    winner: null,
+    stage: 'semi',
   });
-  matches.push({
+  allRows.push({
     match_number: 102,
     team1: 'TBD',
     team2: 'TBD',
-    group_name: null,
-    round: 'Semi-Final',
-    kickoff_time: etToUtc('2026-07-15', '20:00'),
+    group_letter: null,
     venue: 'AT&T Stadium, Dallas',
+    match_date: etToUtc('2026-07-15', '20:00'),
+    status: 'upcoming',
+    winner: null,
+    stage: 'semi',
   });
 
-  // Bronze Final: Match 103, Jul 18
-  matches.push({
+  // Bronze Final: Match 103
+  allRows.push({
     match_number: 103,
     team1: 'TBD',
     team2: 'TBD',
-    group_name: null,
-    round: 'Bronze Final',
-    kickoff_time: etToUtc('2026-07-18', '16:00'),
+    group_letter: null,
     venue: 'Hard Rock Stadium, Miami',
+    match_date: etToUtc('2026-07-18', '16:00'),
+    status: 'upcoming',
+    winner: null,
+    stage: 'bronze',
   });
 
-  // Final: Match 104, Jul 19
-  matches.push({
+  // Final: Match 104
+  allRows.push({
     match_number: 104,
     team1: 'TBD',
     team2: 'TBD',
-    group_name: null,
-    round: 'Final',
-    kickoff_time: etToUtc('2026-07-19', '16:00'),
+    group_letter: null,
     venue: 'MetLife Stadium, New York/New Jersey',
+    match_date: etToUtc('2026-07-19', '16:00'),
+    status: 'upcoming',
+    winner: null,
+    stage: 'final',
   });
 
-  return matches;
-}
+  console.log(`\n📊 Total matches to insert: ${allRows.length}\n`);
 
-async function main() {
-  console.log('🏆 FIFA World Cup 2026 Match Seeder');
-  console.log('====================================\n');
-
-  // Step 1: Delete all existing matches
-  console.log('🗑️  Deleting existing matches...');
-  const { error: deleteError } = await supabase
-    .from('fwc_matches')
-    .delete()
-    .gte('match_number', 0); // Delete all rows
-
-  if (deleteError) {
-    console.error('Error deleting matches:', deleteError);
-    process.exit(1);
-  }
-  console.log('✅ Existing matches deleted.\n');
-
-  // Step 2: Build group stage match data
-  console.log('📋 Preparing 72 group stage matches...');
-  const allMatches: MatchData[] = [];
-
-  for (const m of groupMatches) {
-    const venues = groupVenues[m.group];
-    // Distribute matches across group venues using match index
-    const venueIndex = (m.num - 1) % venues.length;
-    
-    allMatches.push({
-      match_number: m.num,
-      team1: m.team1,
-      team2: m.team2,
-      group_name: m.group,
-      round: 'Group Stage',
-      kickoff_time: etToUtc(m.date, m.time),
-      venue: venues[venueIndex],
-    });
-  }
-
-  // Step 3: Add knockout matches
-  console.log('📋 Preparing 32 knockout stage matches...');
-  const knockoutMatches = generateKnockoutMatches();
-  allMatches.push(...knockoutMatches);
-
-  console.log(`\n📊 Total matches to insert: ${allMatches.length}\n`);
-
-  // Step 4: Insert in batches (Supabase has limits)
+  // Step 4: Insert in batches
   const batchSize = 50;
   let inserted = 0;
 
-  for (let i = 0; i < allMatches.length; i += batchSize) {
-    const batch = allMatches.slice(i, i + batchSize);
+  for (let i = 0; i < allRows.length; i += batchSize) {
+    const batch = allRows.slice(i, i + batchSize);
     const { data, error } = await supabase
       .from('fwc_matches')
       .insert(batch)
@@ -318,19 +342,19 @@ async function main() {
     }
 
     inserted += data.length;
-    console.log(`  ✅ Inserted matches ${batch[0].match_number}-${batch[batch.length - 1].match_number} (${inserted}/${allMatches.length})`);
+    console.log(`  ✅ Inserted matches ${batch[0].match_number}-${batch[batch.length - 1].match_number} (${inserted}/${allRows.length})`);
   }
 
   console.log(`\n🎉 Successfully seeded ${inserted} matches into fwc_matches!`);
   console.log('\nBreakdown:');
-  console.log(`  - Group Stage: 72 matches`);
-  console.log(`  - Round of 32: 16 matches`);
-  console.log(`  - Round of 16: 8 matches`);
-  console.log(`  - Quarter-Finals: 4 matches`);
-  console.log(`  - Semi-Finals: 2 matches`);
-  console.log(`  - Bronze Final: 1 match`);
-  console.log(`  - Final: 1 match`);
-  console.log(`  - Total: 104 matches`);
+  console.log('  - Group Stage: 72 matches');
+  console.log('  - Round of 32: 16 matches');
+  console.log('  - Round of 16: 8 matches');
+  console.log('  - Quarter-Finals: 4 matches');
+  console.log('  - Semi-Finals: 2 matches');
+  console.log('  - Bronze Final: 1 match');
+  console.log('  - Final: 1 match');
+  console.log('  - Total: 104 matches');
 }
 
 main().catch((err) => {
