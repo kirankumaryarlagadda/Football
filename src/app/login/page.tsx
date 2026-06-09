@@ -65,7 +65,7 @@ export default function LoginPage() {
           <h1 className="gradient-text" style={{ fontSize: '1.5rem', fontWeight: 800 }}>
             FWC Picks 2026
           </h1>
-          <p style={{ color: '#a0aec0', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem', marginTop: '0.25rem' }}>
             {forgotMode ? 'Reset your password' : 'Sign in to make your picks'}
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setForgotMode(false); setError(''); }}
-                style={{ color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+                style={{ color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}
               >
                 ← Back to Login
               </button>
@@ -130,7 +130,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => { setForgotMode(true); setError(''); }}
-                style={{ color: '#667eea', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500 }}
+                style={{ color: 'var(--color-primary)', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500 }}
               >
                 Forgot Password?
               </button>
@@ -142,9 +142,9 @@ export default function LoginPage() {
         )}
 
         {!forgotMode && !resetSent && (
-          <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: '#a0aec0' }}>
+          <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
             Don&apos;t have an account?{' '}
-            <a href="/signup" style={{ color: '#667eea', fontWeight: 600, textDecoration: 'none' }}>Sign Up</a>
+            <a href="/signup" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Sign Up</a>
           </p>
         )}
       </div>

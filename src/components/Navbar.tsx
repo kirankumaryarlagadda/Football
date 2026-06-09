@@ -115,10 +115,10 @@ export default function Navbar() {
                   right: 0,
                   top: '100%',
                   marginTop: '0.5rem',
-                  background: 'white',
+                  background: "var(--color-card-solid)",
                   borderRadius: '12px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.12)',
-                  border: '1px solid #e2e8f0',
+                  boxShadow: '0 4px 24px rgba(0,0,0,0.5)',
+                  border: '1px solid var(--color-border-bright)',
                   minWidth: '160px',
                   overflow: 'hidden',
                   zIndex: 100,
@@ -135,14 +135,14 @@ export default function Navbar() {
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontSize: '0.875rem',
-                    color: '#4a5568',
+                    color: 'var(--color-text-body)',
                     fontWeight: 500,
                     textDecoration: 'none',
                   }}
                 >
                   👤 Profile
                 </a>
-                <div style={{ height: 1, background: '#e2e8f0' }} />
+                <div style={{ height: 1, background: 'var(--color-border)' }} />
                 <button
                   onClick={handleLogout}
                   style={{
@@ -153,7 +153,7 @@ export default function Navbar() {
                     textAlign: 'left',
                     cursor: 'pointer',
                     fontSize: '0.875rem',
-                    color: '#f56565',
+                    color: 'var(--color-error)',
                     fontWeight: 500,
                     fontFamily: 'inherit',
                   }}
