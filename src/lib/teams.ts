@@ -45,7 +45,7 @@ export const TEAMS: Record<string, Team> = {
   COD: { id: 'cod', name: 'Congo DR', short_name: 'COD', color: '#007FFF' },
   UZB: { id: 'uzb', name: 'Uzbekistan', short_name: 'UZB', color: '#1EB53A' },
   COL: { id: 'col', name: 'Colombia', short_name: 'COL', color: '#FCD116' },
-  ENG: { id: 'eng', name: 'England', short_name: 'ENG', color: '#FFFFFF' },
+  ENG: { id: 'eng', name: 'England', short_name: 'ENG', color: '#1A3668' },
   CRO: { id: 'cro', name: 'Croatia', short_name: 'CRO', color: '#FF0000' },
   GHA: { id: 'gha', name: 'Ghana', short_name: 'GHA', color: '#006B3F' },
   PAN: { id: 'pan', name: 'Panama', short_name: 'PAN', color: '#DA121A' },

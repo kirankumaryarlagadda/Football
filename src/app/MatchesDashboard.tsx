@@ -176,106 +176,103 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
 
                 return (
                   <div key={match.id} className="card" style={{ padding: '1rem 1.25rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-                      {/* Left: match info */}
-                      <div style={{ flex: 1, minWidth: 180 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                          {match.group_letter && (
-                            <span style={{ fontSize: '0.7rem', color: '#a0aec0', fontWeight: 600 }}>
-                              Grp {match.group_letter}
-                            </span>
-                          )}
-                          {match.stage !== 'group' && (
-                            <span className="badge badge-gold" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>
-                              🏆 {getStageName(match.stage)}
-                            </span>
-                          )}
-                          <span style={{ fontSize: '0.7rem', color: '#a0aec0' }}>#{match.match_number}</span>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontWeight: 700, color: getTeamColor(match.team1) }}>{getTeamFullName(match.team1)}</span>
-                          <span style={{ color: '#a0aec0', fontSize: '0.8rem' }}>vs</span>
-                          <span style={{ fontWeight: 700, color: getTeamColor(match.team2) }}>{getTeamFullName(match.team2)}</span>
-                        </div>
-                        <div style={{ fontSize: '0.75rem', color: '#a0aec0', marginTop: 4 }}>
-                          {formatDate(match.match_date)} · {match.venue}
-                        </div>
-                      </div>
-
-                      {/* Right: pick buttons or countdown */}
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        {!deadlinePassed && <span style={{ fontSize: '0.7rem', color: '#f56565', fontWeight: 600, marginRight: 8 }}>⏱ {countdown}</span>}
-                        
-                        {deadlinePassed ? (
-                          <span className="badge badge-muted">Closed</span>
-                        ) : pick ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: pick.picked_team === 'DRAW' ? '#b7791f' : getTeamColor(pick.picked_team) }}>
-                              {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
-                            </span>
-                            <button
-                              onClick={() => handleResetPick(match.id)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem', color: '#a0aec0' }}
-                              title="Reset pick"
-                            >
-                              ✕
-                            </button>
-                          </div>
-                        ) : (
-                          <div style={{ display: 'flex', gap: 4 }}>
-                            <button
-                              onClick={() => handlePick(match.id, match.team1)}
-                              disabled={isPicking}
-                              style={{
-                                padding: '4px 10px',
-                                borderRadius: 8,
-                                border: `2px solid ${getTeamColor(match.team1)}`,
-                                background: 'white',
-                                color: getTeamColor(match.team1),
-                                fontWeight: 700,
-                                fontSize: '0.75rem',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              {getTeamFullName(match.team1)}
-                            </button>
-                            {drawAllowed && (
-                              <button
-                                onClick={() => handlePick(match.id, 'DRAW')}
-                                disabled={isPicking}
-                                style={{
-                                  padding: '4px 10px',
-                                  borderRadius: 8,
-                                  border: '2px solid #b7791f',
-                                  background: 'white',
-                                  color: '#b7791f',
-                                  fontWeight: 700,
-                                  fontSize: '0.75rem',
-                                  cursor: 'pointer',
-                                }}
-                              >
-                                Draw
-                              </button>
-                            )}
-                            <button
-                              onClick={() => handlePick(match.id, match.team2)}
-                              disabled={isPicking}
-                              style={{
-                                padding: '4px 10px',
-                                borderRadius: 8,
-                                border: `2px solid ${getTeamColor(match.team2)}`,
-                                background: 'white',
-                                color: getTeamColor(match.team2),
-                                fontWeight: 700,
-                                fontSize: '0.75rem',
-                                cursor: 'pointer',
-                              }}
-                            >
-                              {getTeamFullName(match.team2)}
-                            </button>
-                          </div>
+                    {/* Match info */}
+                    <div style={{ marginBottom: '0.75rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                        {match.group_letter && (
+                          <span style={{ fontSize: '0.7rem', color: '#a0aec0', fontWeight: 600 }}>
+                            Grp {match.group_letter}
+                          </span>
                         )}
+                        {match.stage !== 'group' && (
+                          <span className="badge badge-gold" style={{ fontSize: '0.65rem', padding: '2px 6px' }}>
+                            🏆 {getStageName(match.stage)}
+                          </span>
+                        )}
+                        <span style={{ fontSize: '0.7rem', color: '#a0aec0' }}>#{match.match_number}</span>
+                        {!deadlinePassed && <span style={{ fontSize: '0.7rem', color: '#f56565', fontWeight: 600, marginLeft: 'auto' }}>⏱ {countdown}</span>}
                       </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <span style={{ fontWeight: 700, color: getTeamColor(match.team1) }}>{getTeamFullName(match.team1)}</span>
+                        <span style={{ color: '#a0aec0', fontSize: '0.8rem' }}>vs</span>
+                        <span style={{ fontWeight: 700, color: getTeamColor(match.team2) }}>{getTeamFullName(match.team2)}</span>
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: '#a0aec0', marginTop: 4 }}>
+                        {formatDate(match.match_date)} · {match.venue}
+                      </div>
+                    </div>
+
+                    {/* Pick area */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      {deadlinePassed ? (
+                        <span className="badge badge-muted">Closed</span>
+                      ) : pick ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                          <span style={{ fontSize: '0.85rem', fontWeight: 600, color: pick.picked_team === 'DRAW' ? '#b7791f' : getTeamColor(pick.picked_team) }}>
+                            ✓ {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
+                          </span>
+                          <button
+                            onClick={() => handleResetPick(match.id)}
+                            style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem', color: '#a0aec0' }}
+                            title="Reset pick"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => handlePick(match.id, match.team1)}
+                            disabled={isPicking}
+                            style={{
+                              padding: '6px 14px',
+                              borderRadius: 8,
+                              border: `2px solid ${getTeamColor(match.team1)}`,
+                              background: 'white',
+                              color: getTeamColor(match.team1),
+                              fontWeight: 700,
+                              fontSize: '0.8rem',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {getTeamFullName(match.team1)}
+                          </button>
+                          {drawAllowed && (
+                            <button
+                              onClick={() => handlePick(match.id, 'DRAW')}
+                              disabled={isPicking}
+                              style={{
+                                padding: '6px 14px',
+                                borderRadius: 8,
+                                border: '2px solid #b7791f',
+                                background: 'white',
+                                color: '#b7791f',
+                                fontWeight: 700,
+                                fontSize: '0.8rem',
+                                cursor: 'pointer',
+                              }}
+                            >
+                              Draw
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handlePick(match.id, match.team2)}
+                            disabled={isPicking}
+                            style={{
+                              padding: '6px 14px',
+                              borderRadius: 8,
+                              border: `2px solid ${getTeamColor(match.team2)}`,
+                              background: 'white',
+                              color: getTeamColor(match.team2),
+                              fontWeight: 700,
+                              fontSize: '0.8rem',
+                              cursor: 'pointer',
+                            }}
+                          >
+                            {getTeamFullName(match.team2)}
+                          </button>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
