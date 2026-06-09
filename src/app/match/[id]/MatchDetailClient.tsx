@@ -242,7 +242,7 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
                     className="pick-btn"
                     style={{ padding: '12px 24px', borderColor: getTeamColor(match.team1), color: getTeamColor(match.team1), fontSize: '1rem' }}
                   >
-                    {getTeamFullName(match.team1)}
+                    {match.team1}
                   </button>
                   {drawAllowed && (
                     <button
@@ -260,7 +260,7 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
                     className="pick-btn"
                     style={{ padding: '12px 24px', borderColor: getTeamColor(match.team2), color: getTeamColor(match.team2), fontSize: '1rem' }}
                   >
-                    {getTeamFullName(match.team2)}
+                    {match.team2}
                   </button>
                 </div>
               </>

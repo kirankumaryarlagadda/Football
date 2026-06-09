@@ -535,11 +535,11 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
                             </span>
                           )}
                           <span style={{ fontWeight: 800, color: getTeamColor(match.team1), fontSize: '0.95rem' }}>
-                            {match.team1}
+                            {getTeamFullName(match.team1)}
                           </span>
                           <span style={{ color: 'var(--color-text-muted)', fontSize: '0.7rem' }}>vs</span>
                           <span style={{ fontWeight: 800, color: getTeamColor(match.team2), fontSize: '0.95rem' }}>
-                            {match.team2}
+                            {getTeamFullName(match.team2)}
                           </span>
                         </div>
                         {cd && !deadlinePassed && (
