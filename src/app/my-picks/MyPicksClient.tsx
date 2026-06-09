@@ -2,7 +2,7 @@
 
 import Navbar from '@/components/Navbar';
 import { Match, Pick, MatchStage } from '@/lib/types';
-import { getTeamColor } from '@/lib/teams';
+import { getTeamColor, getTeamFullName } from '@/lib/teams';
 import { getMatchPoints, isNoResult } from '@/lib/scoring';
 
 interface Props {
@@ -85,18 +85,18 @@ export default function MyPicksClient({ matches, picks }: Props) {
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
                       <div style={{ fontSize: '0.7rem', color: '#a0aec0' }}>#{match.match_number} {match.group_letter ? `· Grp ${match.group_letter}` : `· ${match.stage}`}</div>
-                      <span style={{ fontWeight: 600 }}>{match.team1} vs {match.team2}</span>
+                      <span style={{ fontWeight: 600 }}>{getTeamFullName(match.team1)} vs {getTeamFullName(match.team2)}</span>
                       {isNR ? (
                         <span style={{ marginLeft: 8, fontSize: '0.75rem', color: '#a0aec0' }}>☔ No Result</span>
                       ) : match.winner === 'DRAW' ? (
                         <span style={{ marginLeft: 8, fontSize: '0.75rem', color: '#b7791f' }}>🤝 Draw</span>
                       ) : (
-                        <span style={{ marginLeft: 8, fontSize: '0.75rem', color: getTeamColor(match.winner!) }}>🏆 {match.winner}</span>
+                        <span style={{ marginLeft: 8, fontSize: '0.75rem', color: getTeamColor(match.winner!) }}>🏆 {getTeamFullName(match.winner!)}</span>
                       )}
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: '0.75rem', color: '#a0aec0' }}>
-                        Picked: {pick ? (pick.picked_team === 'DRAW' ? '🤝 Draw' : pick.picked_team) : '—'}
+                        Picked: {pick ? (pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)) : '—'}
                       </div>
                       <div style={{ fontWeight: 700, color: points > 0 ? '#48bb78' : points < 0 ? '#f56565' : '#a0aec0' }}>
                         {points > 0 ? `+${points}` : points}

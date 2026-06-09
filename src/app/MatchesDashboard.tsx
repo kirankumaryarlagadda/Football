@@ -143,13 +143,13 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                         </div>
                       )}
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '0.75rem 0' }}>
-                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: getTeamColor(match.team1) }}>{match.team1}</span>
+                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: getTeamColor(match.team1) }}>{getTeamFullName(match.team1)}</span>
                         <span style={{ color: '#a0aec0', fontSize: '0.8rem' }}>vs</span>
-                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: getTeamColor(match.team2) }}>{match.team2}</span>
+                        <span style={{ fontWeight: 700, fontSize: '1.1rem', color: getTeamColor(match.team2) }}>{getTeamFullName(match.team2)}</span>
                       </div>
                       {pick && (
                         <div style={{ fontSize: '0.75rem', color: '#667eea', fontWeight: 600 }}>
-                          Your pick: {pick.picked_team === 'DRAW' ? '🤝 Draw' : pick.picked_team}
+                          Your pick: {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
                         </div>
                       )}
                     </div>
@@ -193,9 +193,9 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                           <span style={{ fontSize: '0.7rem', color: '#a0aec0' }}>#{match.match_number}</span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <span style={{ fontWeight: 700, color: getTeamColor(match.team1) }}>{match.team1}</span>
+                          <span style={{ fontWeight: 700, color: getTeamColor(match.team1) }}>{getTeamFullName(match.team1)}</span>
                           <span style={{ color: '#a0aec0', fontSize: '0.8rem' }}>vs</span>
-                          <span style={{ fontWeight: 700, color: getTeamColor(match.team2) }}>{match.team2}</span>
+                          <span style={{ fontWeight: 700, color: getTeamColor(match.team2) }}>{getTeamFullName(match.team2)}</span>
                         </div>
                         <div style={{ fontSize: '0.75rem', color: '#a0aec0', marginTop: 4 }}>
                           {formatDate(match.match_date)} · {match.venue}
@@ -211,7 +211,7 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                         ) : pick ? (
                           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                             <span style={{ fontSize: '0.8rem', fontWeight: 600, color: pick.picked_team === 'DRAW' ? '#b7791f' : getTeamColor(pick.picked_team) }}>
-                              {pick.picked_team === 'DRAW' ? '🤝 Draw' : pick.picked_team}
+                              {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
                             </span>
                             <button
                               onClick={() => handleResetPick(match.id)}
@@ -237,7 +237,7 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                                 cursor: 'pointer',
                               }}
                             >
-                              {match.team1}
+                              {getTeamFullName(match.team1)}
                             </button>
                             {drawAllowed && (
                               <button
@@ -271,7 +271,7 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                                 cursor: 'pointer',
                               }}
                             >
-                              {match.team2}
+                              {getTeamFullName(match.team2)}
                             </button>
                           </div>
                         )}
@@ -305,14 +305,14 @@ export default function MatchesDashboard({ matches, userPicks, userId, isAdmin }
                             {match.group_letter ? `Grp ${match.group_letter} · ` : ''}#{match.match_number}
                           </div>
                           <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                            {match.team1} vs {match.team2}
+                            {getTeamFullName(match.team1)} vs {getTeamFullName(match.team2)}
                           </span>
                           {match.winner === 'NR' ? (
                             <span style={{ marginLeft: 8, fontSize: '0.75rem', color: '#a0aec0' }}>☔ No Result</span>
                           ) : match.winner === 'DRAW' ? (
                             <span style={{ marginLeft: 8, fontSize: '0.75rem', color: '#b7791f' }}>🤝 Draw</span>
                           ) : (
-                            <span style={{ marginLeft: 8, fontSize: '0.75rem', color: getTeamColor(match.winner!) }}>🏆 {match.winner}</span>
+                            <span style={{ marginLeft: 8, fontSize: '0.75rem', color: getTeamColor(match.winner!) }}>🏆 {getTeamFullName(match.winner!)}</span>
                           )}
                         </div>
                         <div>

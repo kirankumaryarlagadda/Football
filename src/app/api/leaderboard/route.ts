@@ -29,7 +29,19 @@ export async function GET() {
     .order('match_number', { ascending: true });
 
   if (!matches || matches.length === 0) {
-    return NextResponse.json({ leaderboard: [] });
+    // No completed matches yet — still show all players with 0 points
+    const ranked = profiles.map((profile, index) => ({
+      user_id: profile.id,
+      display_name: profile.display_name,
+      total_points: 0,
+      correct_picks: 0,
+      wrong_picks: 0,
+      missed_picks: 0,
+      current_streak: 0,
+      longest_streak: 0,
+      rank: index + 1,
+    }));
+    return NextResponse.json({ leaderboard: ranked });
   }
 
   // Get all picks for completed matches
