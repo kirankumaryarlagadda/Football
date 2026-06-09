@@ -155,6 +155,42 @@ export default function AdminClient({ matches: initialMatches, profiles: initial
     }
   };
 
+  const handleMakeAdmin = async (profileId: string) => {
+    if (!confirm('Make this player an admin?')) return;
+    const res = await fetch('/api/admin/manage-players', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'make-admin', user_id: profileId }),
+    });
+    if (res.ok) {
+      setProfiles((prev) => prev.map((p) => p.id === profileId ? { ...p, is_admin: true } : p));
+    }
+  };
+
+  const handleRemoveAdmin = async (profileId: string) => {
+    if (!confirm('Remove admin rights from this player?')) return;
+    const res = await fetch('/api/admin/manage-players', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'remove-admin', user_id: profileId }),
+    });
+    if (res.ok) {
+      setProfiles((prev) => prev.map((p) => p.id === profileId ? { ...p, is_admin: false } : p));
+    }
+  };
+
+  const handleRemovePlayer = async (profileId: string) => {
+    if (!confirm('Remove this player permanently? This will delete all their picks.')) return;
+    const res = await fetch('/api/admin/manage-players', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'remove', user_id: profileId }),
+    });
+    if (res.ok) {
+      setProfiles((prev) => prev.filter((p) => p.id !== profileId));
+    }
+  };
+
   const handleSavePrizes = async () => {
     const res = await fetch('/api/admin/update-prizes', {
       method: 'POST',
@@ -306,30 +342,54 @@ export default function AdminClient({ matches: initialMatches, profiles: initial
         {/* PLAYERS TAB */}
         {activeTab === 'players' && (
           <div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              {profiles.map((p) => (
-                <div key={p.id} className="card" style={{ padding: '0.75rem 1rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
-                  <div>
-                    <div style={{ fontWeight: 600 }}>
-                      {p.display_name}
-                      {p.id === userId && <span style={{ marginLeft: 4, fontSize: '0.7rem', color: '#667eea' }}>(You)</span>}
-                      {p.is_admin && <span style={{ marginLeft: 4, fontSize: '0.7rem', color: '#b7791f' }}>Admin</span>}
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-text-heading)' }}>Player Management ({profiles.length})</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              {profiles.map((p) => {
+                const isYou = p.id === userId;
+                const isOtherAdmin = p.is_admin && !isYou;
+                return (
+                  <div key={p.id} className="card" style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, borderLeft: p.is_admin ? '3px solid var(--color-accent)' : p.is_approved ? '3px solid var(--color-success)' : '3px solid var(--color-text-muted)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: '50%', background: p.is_admin ? 'linear-gradient(135deg, var(--color-accent), #f59e0b)' : 'linear-gradient(135deg, var(--color-primary), #8b5cf6)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 700, fontSize: '0.85rem' }}>
+                        {p.display_name.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-text-heading)' }}>{p.display_name}</span>
+                          <span style={{ fontSize: '0.72rem', color: 'var(--color-text-muted)' }}>{p.email}</span>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>🎫 {new Date(p.created_at).toLocaleDateString()}</span>
+                          {p.is_admin && <span className="badge badge-gold">ADMIN</span>}
+                          {!p.is_admin && p.is_approved && <span className="badge badge-success">Approved ✓</span>}
+                          {!p.is_approved && <span className="badge badge-error">Pending</span>}
+                          {isYou && <span style={{ fontSize: '0.7rem', color: 'var(--color-primary)', fontWeight: 600 }}>(You)</span>}
+                        </div>
+                      </div>
                     </div>
-                    <div style={{ fontSize: '0.75rem', color: '#a0aec0' }}>{p.email}</div>
+                    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                      {!p.is_approved && (
+                        <>
+                          <button onClick={() => handleApprove(p.id)} style={{ padding: '6px 12px', borderRadius: 8, border: 'none', background: 'var(--color-success)', color: 'white', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>✅ Approve</button>
+                          <button onClick={() => handleReject(p.id)} style={{ padding: '6px 12px', borderRadius: 8, border: 'none', background: 'var(--color-error)', color: 'white', fontSize: '0.75rem', fontWeight: 600, cursor: 'pointer' }}>❌ Reject</button>
+                        </>
+                      )}
+                      {p.is_approved && !isYou && (
+                        <>
+                          <button onClick={() => handleResetPassword(p.id)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid var(--color-border-bright)', background: 'var(--color-card)', fontSize: '0.75rem', cursor: 'pointer', color: 'var(--color-text-body)' }}>🔑 Reset Password</button>
+                          {!p.is_admin && (
+                            <button onClick={() => handleMakeAdmin(p.id)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid var(--color-border-bright)', background: 'var(--color-card)', fontSize: '0.75rem', cursor: 'pointer', color: 'var(--color-text-body)' }}>🔥 Make Admin</button>
+                          )}
+                          {isOtherAdmin && (
+                            <button onClick={() => handleRemoveAdmin(p.id)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid var(--color-border-bright)', background: 'var(--color-card)', fontSize: '0.75rem', cursor: 'pointer', color: 'var(--color-text-body)' }}>📋 Remove Admin</button>
+                          )}
+                          {!p.is_admin && (
+                            <button onClick={() => handleRemovePlayer(p.id)} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid var(--color-border-bright)', background: 'var(--color-card)', fontSize: '0.75rem', cursor: 'pointer', color: 'var(--color-error)' }}>🗑 Remove</button>
+                          )}
+                        </>
+                      )}
+                    </div>
                   </div>
-                  <div style={{ display: 'flex', gap: 4 }}>
-                    {!p.is_approved && (
-                      <>
-                        <button onClick={() => handleApprove(p.id)} style={{ padding: '4px 8px', borderRadius: 6, border: 'none', background: '#48bb78', color: 'white', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer' }}>✅ Approve</button>
-                        <button onClick={() => handleReject(p.id)} style={{ padding: '4px 8px', borderRadius: 6, border: 'none', background: '#f56565', color: 'white', fontSize: '0.7rem', fontWeight: 600, cursor: 'pointer' }}>❌ Reject</button>
-                      </>
-                    )}
-                    {p.is_approved && p.id !== userId && (
-                      <button onClick={() => handleResetPassword(p.id)} style={{ padding: '4px 8px', borderRadius: 6, border: '1px solid #e2e8f0', background: 'white', fontSize: '0.7rem', cursor: 'pointer' }}>🔑 Reset Pwd</button>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}

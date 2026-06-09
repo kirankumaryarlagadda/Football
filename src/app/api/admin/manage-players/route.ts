@@ -36,5 +36,24 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true, temp_password: tempPassword, email: targetProfile?.email });
   }
 
+  if (action === 'make-admin') {
+    const { error } = await supabaseAdmin.from('profiles').update({ is_admin: true }).eq('id', user_id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true });
+  }
+
+  if (action === 'remove-admin') {
+    const { error } = await supabaseAdmin.from('profiles').update({ is_admin: false }).eq('id', user_id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true });
+  }
+
+  if (action === 'remove') {
+    await supabaseAdmin.from('fwc_picks').delete().eq('user_id', user_id);
+    await supabaseAdmin.from('profiles').delete().eq('id', user_id);
+    await supabaseAdmin.auth.admin.deleteUser(user_id);
+    return NextResponse.json({ success: true });
+  }
+
   return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
 }
