@@ -117,7 +117,7 @@ export default function Navbar() {
                   marginTop: '0.5rem',
                   background: 'var(--color-card-solid)',
                   borderRadius: '12px',
-                  boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+                  boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
                   border: '1px solid var(--color-border-bright)',
                   minWidth: '160px',
                   overflow: 'hidden',
