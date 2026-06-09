@@ -95,7 +95,7 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
         {/* Match header */}
         <div className="card" style={{ textAlign: 'center', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
-            <span style={{ fontSize: '0.8rem', color: '#a0aec0' }}>Match #{match.match_number}</span>
+            <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>Match #{match.match_number}</span>
             <span className={`badge ${match.status === 'live' ? 'badge-error' : match.status === 'completed' ? 'badge-success' : 'badge-muted'}`}>
               {match.status.toUpperCase()}
             </span>
@@ -106,9 +106,9 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
             </div>
           )}
           {match.group_letter && (
-            <div style={{ fontSize: '0.8rem', color: '#a0aec0', marginBottom: 8 }}>Group {match.group_letter}</div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', marginBottom: 8 }}>Group {match.group_letter}</div>
           )}
-          <div style={{ color: '#a0aec0', fontSize: '0.8rem', marginBottom: 16, lineHeight: 1.5 }}>
+          <div style={{ color: 'var(--color-text-muted)', fontSize: '0.8rem', marginBottom: 16, lineHeight: 1.5 }}>
             {formatMatchDate(match.match_date, 'long')} · {getMatchTimeLocal(match.match_date)}<br />
             {match.venue}
           </div>
@@ -116,22 +116,22 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 24 }}>
             <div>
               <div style={{ fontSize: '2rem', fontWeight: 800, color: getTeamColor(match.team1) }}>{match.team1}</div>
-              <div style={{ fontSize: '0.75rem', color: '#a0aec0' }}>{getTeamFullName(match.team1)}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{getTeamFullName(match.team1)}</div>
             </div>
-            <span style={{ color: '#a0aec0', fontSize: '0.9rem', fontWeight: 600 }}>vs</span>
+            <span style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', fontWeight: 600 }}>vs</span>
             <div>
               <div style={{ fontSize: '2rem', fontWeight: 800, color: getTeamColor(match.team2) }}>{match.team2}</div>
-              <div style={{ fontSize: '0.75rem', color: '#a0aec0' }}>{getTeamFullName(match.team2)}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{getTeamFullName(match.team2)}</div>
             </div>
           </div>
 
           {/* Winner/Draw/NR banner */}
           {match.status === 'completed' && match.winner && (
-            <div style={{ marginTop: 16, padding: '0.75rem', borderRadius: 12, background: match.winner === 'NR' ? 'rgba(160,174,192,0.1)' : match.winner === 'DRAW' ? 'rgba(236,201,75,0.1)' : 'rgba(72,187,120,0.1)' }}>
+            <div style={{ marginTop: 16, padding: '0.75rem', borderRadius: 12, background: match.winner === 'NR' ? 'rgba(107,130,153,0.15)' : match.winner === 'DRAW' ? 'var(--color-accent-dim)' : 'var(--color-primary-dim)' }}>
               {match.winner === 'NR' ? (
-                <span style={{ fontWeight: 700, color: '#a0aec0' }}>☔ Match Abandoned — No Result</span>
+                <span style={{ fontWeight: 700, color: 'var(--color-text-muted)' }}>☔ Match Abandoned — No Result</span>
               ) : match.winner === 'DRAW' ? (
-                <span style={{ fontWeight: 700, color: '#b7791f' }}>🤝 Match Drawn</span>
+                <span style={{ fontWeight: 700, color: 'var(--color-accent)' }}>🤝 Match Drawn</span>
               ) : (
                 <span style={{ fontWeight: 700, color: getTeamColor(match.winner) }}>🏆 {getTeamFullName(match.winner)} won</span>
               )}
@@ -144,12 +144,12 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
         {/* Your Pick section */}
         {currentPick && (
           <div className="card" style={{ textAlign: 'center', marginBottom: '1rem' }}>
-            <div style={{ fontSize: '0.75rem', color: '#a0aec0', marginBottom: 4 }}>YOUR PICK</div>
-            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: currentPick.picked_team === 'DRAW' ? '#b7791f' : getTeamColor(currentPick.picked_team) }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginBottom: 4 }}>YOUR PICK</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 800, color: currentPick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(currentPick.picked_team) }}>
               {currentPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(currentPick.picked_team)}
             </div>
             {currentPick.picked_team !== 'DRAW' && (
-              <div style={{ fontSize: '0.8rem', color: '#a0aec0' }}>{getTeamFullName(currentPick.picked_team)}</div>
+              <div style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>{getTeamFullName(currentPick.picked_team)}</div>
             )}
             {match.status === 'completed' && match.winner && match.winner !== 'NR' && (
               <div style={{ marginTop: 8 }}>
@@ -171,26 +171,26 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
         {/* PICKS REVEALED (match started) */}
         {matchStarted && (
           <div className="card" style={{ marginBottom: '1rem' }}>
-            <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '1rem' }}>📊 Pick Distribution</h3>
+            <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '1rem', color: 'var(--color-text-heading)' }}>📊 Pick Distribution</h3>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
               <span style={{ fontWeight: 700, color: getTeamColor(match.team1) }}>{match.team1} {team1Picks.length} ({totalPicks ? Math.round(team1Picks.length / totalPicks * 100) : 0}%)</span>
-              <span style={{ fontSize: '0.75rem', color: '#a0aec0' }}>{totalPicks} picked · {skippedPlayers.length} skipped</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>{totalPicks} picked · {skippedPlayers.length} skipped</span>
               <span style={{ fontWeight: 700, color: getTeamColor(match.team2) }}>{match.team2} {team2Picks.length} ({totalPicks ? Math.round(team2Picks.length / totalPicks * 100) : 0}%)</span>
             </div>
             {drawAllowed && drawPicks.length > 0 && (
-              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: '#b7791f', fontWeight: 600, marginBottom: 8 }}>
+              <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-accent)', fontWeight: 600, marginBottom: 8 }}>
                 🤝 Draw {drawPicks.length} ({totalPicks ? Math.round(drawPicks.length / totalPicks * 100) : 0}%)
               </div>
             )}
             {/* Distribution bar */}
             <div style={{ display: 'flex', height: 8, borderRadius: 4, overflow: 'hidden' }}>
               {team1Picks.length > 0 && <div style={{ flex: team1Picks.length, background: getTeamColor(match.team1) }} />}
-              {drawPicks.length > 0 && <div style={{ flex: drawPicks.length, background: '#ecc94b' }} />}
+              {drawPicks.length > 0 && <div style={{ flex: drawPicks.length, background: 'var(--color-accent)' }} />}
               {team2Picks.length > 0 && <div style={{ flex: team2Picks.length, background: getTeamColor(match.team2) }} />}
             </div>
 
             {/* All picks grid */}
-            <h3 style={{ fontSize: '0.9rem', fontWeight: 700, margin: '1.5rem 0 1rem' }}>
+            <h3 style={{ fontSize: '0.9rem', fontWeight: 700, margin: '1.5rem 0 1rem', color: 'var(--color-text-heading)' }}>
               👥 All Picks ({totalPicks} of {profiles.length} players)
             </h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '0.5rem' }}>
@@ -204,25 +204,25 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
                     style={{
                       padding: '0.5rem',
                       borderRadius: 8,
-                      border: `2px solid ${pick.picked_team === 'DRAW' ? '#ecc94b' : getTeamColor(pick.picked_team)}`,
-                      background: isCorrect ? 'rgba(72,187,120,0.05)' : 'white',
+                      border: `2px solid ${pick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(pick.picked_team)}`,
+                      background: isCorrect ? 'var(--color-primary-dim)' : 'rgba(255,255,255,0.03)',
                       textAlign: 'center',
                     }}
                   >
-                    <div style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-body)' }}>
                       {profile.display_name}
-                      {pick.user_id === userId && <span style={{ marginLeft: 4, fontSize: '0.6rem', background: '#667eea', color: 'white', borderRadius: 4, padding: '1px 4px' }}>YOU</span>}
+                      {pick.user_id === userId && <span style={{ marginLeft: 4, fontSize: '0.6rem', background: 'var(--color-primary)', color: 'var(--color-bg)', borderRadius: 4, padding: '1px 4px' }}>YOU</span>}
                     </div>
-                    <div style={{ fontSize: '0.7rem', color: pick.picked_team === 'DRAW' ? '#b7791f' : getTeamColor(pick.picked_team), fontWeight: 600 }}>
+                    <div style={{ fontSize: '0.7rem', color: pick.picked_team === 'DRAW' ? 'var(--color-accent)' : getTeamColor(pick.picked_team), fontWeight: 600 }}>
                       → {pick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(pick.picked_team)}
                     </div>
                   </div>
                 );
               })}
               {skippedPlayers.map((p) => (
-                <div key={p.id} style={{ padding: '0.5rem', borderRadius: 8, border: '2px solid #e2e8f0', textAlign: 'center', opacity: 0.5 }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 600 }}>{p.display_name}</div>
-                  <div style={{ fontSize: '0.7rem', color: '#a0aec0' }}>Skipped</div>
+                <div key={p.id} style={{ padding: '0.5rem', borderRadius: 8, border: '2px solid var(--color-border)', textAlign: 'center', opacity: 0.5 }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--color-text-body)' }}>{p.display_name}</div>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--color-text-muted)' }}>Skipped</div>
                 </div>
               ))}
             </div>
@@ -234,12 +234,13 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
           <div className="card" style={{ marginBottom: '1rem' }}>
             {!deadlinePassed && !currentPick && (
               <>
-                <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '1rem', textAlign: 'center' }}>Make Your Pick</h3>
+                <h3 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '1rem', textAlign: 'center', color: 'var(--color-text-heading)' }}>Make Your Pick</h3>
                 <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <button
                     onClick={() => handlePick(match.team1)}
                     disabled={picking}
-                    style={{ padding: '12px 24px', borderRadius: 12, border: `2px solid ${getTeamColor(match.team1)}`, background: 'white', color: getTeamColor(match.team1), fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}
+                    className="pick-btn"
+                    style={{ padding: '12px 24px', borderColor: getTeamColor(match.team1), color: getTeamColor(match.team1), fontSize: '1rem' }}
                   >
                     {getTeamFullName(match.team1)}
                   </button>
@@ -247,7 +248,8 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
                     <button
                       onClick={() => handlePick('DRAW')}
                       disabled={picking}
-                      style={{ padding: '12px 24px', borderRadius: 12, border: '2px solid #b7791f', background: 'white', color: '#b7791f', fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}
+                      className="pick-btn"
+                      style={{ padding: '12px 24px', borderColor: 'var(--color-accent)', color: 'var(--color-accent)', fontSize: '1rem' }}
                     >
                       🤝 Draw
                     </button>
@@ -255,7 +257,8 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
                   <button
                     onClick={() => handlePick(match.team2)}
                     disabled={picking}
-                    style={{ padding: '12px 24px', borderRadius: 12, border: `2px solid ${getTeamColor(match.team2)}`, background: 'white', color: getTeamColor(match.team2), fontWeight: 700, cursor: 'pointer', fontSize: '1rem' }}
+                    className="pick-btn"
+                    style={{ padding: '12px 24px', borderColor: getTeamColor(match.team2), color: getTeamColor(match.team2), fontSize: '1rem' }}
                   >
                     {getTeamFullName(match.team2)}
                   </button>
@@ -264,19 +267,19 @@ export default function MatchDetailClient({ match, picks, userPick, userId, prof
             )}
             {!deadlinePassed && currentPick && (
               <div style={{ textAlign: 'center' }}>
-                <p style={{ color: '#a0aec0', fontSize: '0.85rem', marginBottom: 8 }}>You picked: <strong>{currentPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(currentPick.picked_team)}</strong></p>
-                <button onClick={handleReset} style={{ background: 'none', border: '1px solid #e2e8f0', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: '0.8rem', color: '#a0aec0' }}>
+                <p style={{ color: 'var(--color-text-muted)', fontSize: '0.85rem', marginBottom: 8 }}>You picked: <strong style={{ color: 'var(--color-primary)' }}>{currentPick.picked_team === 'DRAW' ? '🤝 Draw' : getTeamFullName(currentPick.picked_team)}</strong></p>
+                <button onClick={handleReset} style={{ background: 'none', border: '1px solid var(--color-border)', borderRadius: 8, padding: '6px 12px', cursor: 'pointer', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
                   Change Pick
                 </button>
               </div>
             )}
             {deadlinePassed && (
-              <div style={{ textAlign: 'center', color: '#a0aec0' }}>
+              <div style={{ textAlign: 'center', color: 'var(--color-text-muted)' }}>
                 <p>⏱ Pick deadline has passed</p>
                 <p style={{ fontSize: '0.8rem', marginTop: 4 }}>Picks will be revealed when the match starts</p>
               </div>
             )}
-            <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: '#a0aec0' }}>
+            <div style={{ textAlign: 'center', marginTop: '1rem', fontSize: '0.8rem', color: 'var(--color-text-muted)' }}>
               🔒 {totalPickCount} player{totalPickCount !== 1 ? 's' : ''} picked so far
             </div>
           </div>

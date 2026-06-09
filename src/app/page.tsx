@@ -22,6 +22,10 @@ export default async function HomePage() {
     .select('*')
     .eq('user_id', user.id);
 
+  const { data: allPicks } = await supabase
+    .from('fwc_picks')
+    .select('match_id, picked_team');
+
   const { data: profile } = await supabase
     .from('profiles')
     .select('is_admin')
@@ -32,6 +36,7 @@ export default async function HomePage() {
     <MatchesDashboard
       matches={matches || []}
       userPicks={picks || []}
+      allPicks={allPicks || []}
       userId={user.id}
       isAdmin={profile?.is_admin || false}
     />
