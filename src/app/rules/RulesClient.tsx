@@ -20,7 +20,7 @@ export default function RulesClient() {
             <li>Predict the result of each FIFA World Cup 2026 match</li>
             <li><strong>Group Stage:</strong> Pick Team 1, Draw, or Team 2</li>
             <li><strong>Knockout:</strong> Pick Team 1 or Team 2 (winner after penalties counts)</li>
-            <li>Picks lock 30 minutes before kickoff</li>
+            <li>Picks lock at match start time (kickoff)</li>
             <li>Picks are hidden until the match starts</li>
             <li>Missing a pick counts as a wrong pick</li>
           </ul>

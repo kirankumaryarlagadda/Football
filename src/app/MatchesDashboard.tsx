@@ -31,13 +31,11 @@ function getPickDistribution(allPicks: { match_id: string; picked_team: string }
 }
 
 function isPickDeadlinePassed(matchDate: string): boolean {
-  const deadline = new Date(new Date(matchDate).getTime() - 30 * 60 * 1000);
-  return new Date() >= deadline;
+  return new Date() >= new Date(matchDate);
 }
 
 function getCountdown(matchDate: string): string {
-  const deadline = new Date(new Date(matchDate).getTime() - 30 * 60 * 1000);
-  const diff = deadline.getTime() - Date.now();
+  const diff = new Date(matchDate).getTime() - Date.now();
   if (diff <= 0) return '';
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
@@ -414,7 +412,7 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
                     {/* Countdown */}
                     {cd && !deadlinePassed && (
                       <div style={{ textAlign: 'center', fontSize: '0.8rem', color: 'var(--color-error)', fontWeight: 600 }}>
-                        ⏰ Pick closes in {cd}
+                        ⏰ Picks lock at kickoff ·  {cd}
                       </div>
                     )}
 

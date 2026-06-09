@@ -22,10 +22,9 @@ export async function POST(request: NextRequest) {
   if (!match) return NextResponse.json({ error: 'Match not found' }, { status: 404 });
   if (match.status !== 'upcoming') return NextResponse.json({ error: 'Match is no longer upcoming' }, { status: 400 });
 
-  // Check deadline (30 min before)
-  const deadline = new Date(new Date(match.match_date).getTime() - 30 * 60 * 1000);
-  if (new Date() >= deadline) {
-    return NextResponse.json({ error: 'Pick deadline has passed' }, { status: 400 });
+  // Check deadline (match start time)
+  if (new Date() >= new Date(match.match_date)) {
+    return NextResponse.json({ error: 'Pick deadline has passed (match started)' }, { status: 400 });
   }
 
   // Validate picked_team
@@ -84,9 +83,9 @@ export async function DELETE(request: NextRequest) {
   if (!match) return NextResponse.json({ error: 'Match not found' }, { status: 404 });
   if (match.status !== 'upcoming') return NextResponse.json({ error: 'Cannot change pick after match started' }, { status: 400 });
 
-  const deadline = new Date(new Date(match.match_date).getTime() - 30 * 60 * 1000);
-  if (new Date() >= deadline) {
-    return NextResponse.json({ error: 'Pick deadline has passed' }, { status: 400 });
+  // Check deadline (match start time)
+  if (new Date() >= new Date(match.match_date)) {
+    return NextResponse.json({ error: 'Pick deadline has passed (match started)' }, { status: 400 });
   }
 
   const { error } = await supabaseAdmin

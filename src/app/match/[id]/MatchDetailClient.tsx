@@ -16,8 +16,7 @@ interface Props {
 }
 
 function isPickDeadlinePassed(matchDate: string): boolean {
-  const deadline = new Date(new Date(matchDate).getTime() - 30 * 60 * 1000);
-  return new Date() >= deadline;
+  return new Date() >= new Date(matchDate);
 }
 
 function getStageName(stage: MatchStage): string {
