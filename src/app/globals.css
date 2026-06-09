@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --color-bg: #f8fafb;
-  --color-bg-secondary: #f0f4f7;
+  --color-bg: #f1f5f9;
+  --color-bg-secondary: #e8eef4;
   --color-card: #ffffff;
   --color-card-solid: #ffffff;
   --color-card-hover: #f8fafb;
-  --color-border: #e8edf2;
-  --color-border-bright: #d0d9e2;
-  --color-text-body: #4a5568;
-  --color-text-heading: #1a202c;
+  --color-border: #e2e8f0;
+  --color-border-bright: #cbd5e1;
+  --color-text-body: #475569;
+  --color-text-heading: #1e293b;
   --color-text-muted: #94a3b8;
   --color-primary: #3b82f6;
   --color-primary-dim: rgba(59, 130, 246, 0.08);
@@ -19,7 +19,7 @@
   --color-success-dim: rgba(16, 185, 129, 0.08);
   --color-error: #ef4444;
   --color-error-dim: rgba(239, 68, 68, 0.08);
-  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.03);
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 6px 16px rgba(0, 0, 0, 0.04);
   --card-radius: 14px;
   --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
@@ -51,12 +51,13 @@ body {
   border-radius: var(--card-radius);
   border: 1px solid var(--color-border);
   padding: 1.5rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
 }
 
 .card:hover {
   border-color: var(--color-border-bright);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 8px 24px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
 }
 
 /* Navbar */

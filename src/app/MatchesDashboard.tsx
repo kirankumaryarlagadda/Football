@@ -328,7 +328,7 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
                     fontWeight: 600,
                     fontSize: '0.8rem',
                     cursor: 'pointer',
-                    boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.3)' : 'none',
+                    boxShadow: viewMode === 'grid' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                     transition: 'all 0.2s',
                   }}
                 >
@@ -345,7 +345,7 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
                     fontWeight: 600,
                     fontSize: '0.8rem',
                     cursor: 'pointer',
-                    boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.3)' : 'none',
+                    boxShadow: viewMode === 'list' ? '0 1px 3px rgba(0,0,0,0.08)' : 'none',
                     transition: 'all 0.2s',
                   }}
                 >
@@ -359,7 +359,7 @@ export default function MatchesDashboard({ matches, userPicks, allPicks, userId,
               style={{
                 display: viewMode === 'grid' ? 'grid' : 'none',
                 gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                gap: '1rem',
+                gap: '1.25rem',
               }}
             >
               {upcomingMatches.map((match) => {
